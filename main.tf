@@ -52,6 +52,6 @@ resource "aws_instance" "app_server" {
 
 
   tags = {
-    Name = "hard-to-heat-homes-2.0"
+    Name = "practice-run-hard-to-heat-homes"
   }
 }
