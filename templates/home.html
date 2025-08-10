@@ -39,11 +39,14 @@
     </table>
 
     {% block scripts %}
-      <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-      <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
-      <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+      <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
 
-      <script defer>
+      <script>
         $(document).ready(function () {
           $("#data").DataTable({
             paging: true,
@@ -58,32 +61,30 @@
         });
       </script>
 
-      <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="">
-      </script>
+      {% for prop in properties %}
+        {% if prop.lat and prop.long %}
+          <script>
+            window.addEventListener("load", function() {
+              {% if prop.address == "" %}
+                setAddress('{{prop.uprn}}','{{prop.uprn}}', '{{key}}');
+              {% endif %}
 
-      <script defer>
-        document.addEventListener("DOMContentLoaded", function () {
-          {% for prop in properties %}
-            {% if prop.lat and prop.long %}
-              const map{{prop.uprn}} = L.map('map-{{prop.uprn}}', {
-                attributionControl: false,
-                zoomControl: false
-              }).setView([{{prop.lat}}, {{prop.long}}], 15);
-
+              const map = L.map('map-{{ prop.uprn }}').setView([{{ prop.lat }}, {{ prop.long }}], 15);
               L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19
-              }).addTo(map{{prop.uprn}});
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              }).addTo(map);
 
-              L.marker([{{prop.lat}}, {{prop.long}}]).addTo(map{{prop.uprn}});
-            {% endif %}
-          {% endfor %}
-        });
-      </script>
+              L.marker([{{ prop.lat }}, {{ prop.long }}]).addTo(map);
+            });
+          </script>
+        {% endif %}
+      {% endfor %}
     {% endblock %}
   </div>
 </div>
 {% endblock %}
+
 
 
 
