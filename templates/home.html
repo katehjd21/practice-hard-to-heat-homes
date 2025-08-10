@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% block content %}
 <div class="govuk-grid-row">
   <div>
@@ -17,9 +18,9 @@
       <tbody class="govuk-table__body">
         {% for prop in properties %}
         <tr class="govuk-table__row">
-          <td scope="row" class="govuk-table__cell" id="{{prop.uprn}}">
+          <td scope="row" class="govuk-table__cell" id="{{ prop.uprn }}">
             {% if prop.address == "" %}
-              <a onclick="setAddress('{{prop.uprn}}','{{prop.uprn}}', '{{key}}')" style="color:blue; text-decoration: underline">Click for address</a>
+              <a onclick="setAddress('{{ prop.uprn }}', '{{ prop.uprn }}', '{{ key }}')" style="color:blue; text-decoration: underline">Click for address</a>
             {% else %}
               {{ prop.address }}
             {% endif %}
@@ -30,60 +31,74 @@
           </td>
           <td scope="row" class="govuk-table__cell">
             <a class="govuk-button govuk-button--secondary" data-module="govuk-button"
-               href="{{url_for('property', uprn=prop.uprn)}}"
+               href="{{ url_for('property', uprn=prop.uprn) }}"
                style="color:black; text-decoration: none">Details</a>
           </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+  </div>
+</div>
+{% endblock %}
 
-    {% block scripts %}
-      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-      <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
-      <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
-      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""></script>
+{% block scripts %}
+  <!-- jQuery and DataTables JS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+  <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
 
-      <script>
-        $(document).ready(function () {
-          $("#data").DataTable({
-            paging: true,
-            pageLength: 25,
-            order: [],
-            ordering: true,
-            columnDefs: [{
-              orderable: false,
-              targets: "no-sort"
-            }]
-          });
-        });
-      </script>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
 
+  <script>
+    function initMaps() {
       {% for prop in properties %}
         {% if prop.lat and prop.long %}
-          <script>
-            window.addEventListener("load", function() {
-              {% if prop.address == "" %}
-                setAddress('{{prop.uprn}}','{{prop.uprn}}', '{{key}}');
-              {% endif %}
-
-              const map = L.map('map-{{ prop.uprn }}').setView([{{ prop.lat }}, {{ prop.long }}], 15);
+          (function() {
+            const mapId = 'map-{{ prop.uprn }}';
+            // Check if map container exists (in case of pagination)
+            if (document.getElementById(mapId) && !document.getElementById(mapId)._leaflet_id) {
+              const map = L.map(mapId).setView(
+                [{{ prop.lat }}, {{ prop.long }}],
+                15
+              );
               L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               }).addTo(map);
-
               L.marker([{{ prop.lat }}, {{ prop.long }}]).addTo(map);
-            });
-          </script>
+            }
+          })();
         {% endif %}
       {% endfor %}
-    {% endblock %}
-  </div>
-</div>
+    }
+
+    $(document).ready(function () {
+      const table = $("#data").DataTable({
+        paging: true,
+        pageLength: 25,
+        order: [],
+        ordering: true,
+        columnDefs: [{
+          orderable: false,
+          targets: "no-sort"
+        }]
+      });
+
+      // Initialize maps after table is drawn (first load and on pagination/filter)
+      table.on('draw', function () {
+        initMaps();
+      });
+
+      // Initial map init on page load
+      initMaps();
+    });
+  </script>
 {% endblock %}
+
 
 
 
