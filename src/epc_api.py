@@ -10,4 +10,5 @@ def epc_api_call(headers, params):
         data = response.json()
         return data
     except Exception:
-        return False
+
+
