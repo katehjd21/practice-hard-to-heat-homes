@@ -1,83 +1,49 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="govuk-grid-row">
-  <div>
-    <h1 class="govuk-heading-l">Hard to Heat Homes</h1>
-    <table class="govuk-table govuk-table--small-text-until-tablet" id="data">
-      <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-          <th scope="col" class="govuk-table__header no-sort">Address</th>
-          <th scope="col" class="govuk-table__header" title="Low 0-4 High">
-            Hard To Heat Score:<br>(easy) 0 - 4 (hard)
-          </th>
-          <th scope="col" class="govuk-table__header no-sort">Map</th>
-          <th scope="col" class="govuk-table__header no-sort"></th>
-        </tr>
-      </thead>
-      <tbody class="govuk-table__body">
-        {% for prop in properties %}
-        <tr class="govuk-table__row">
-          <td scope="row" class="govuk-table__cell" id="{{ prop.uprn }}">
-            {% if prop.address == "" %}
-              <a onclick="setAddress('{{ prop.uprn }}', '{{ prop.uprn }}', '{{ key }}')" style="color:blue; text-decoration: underline">Click for address</a>
-            {% else %}
-              {{ prop.address }}
-            {% endif %}
-          </td>
-          <td scope="row" class="govuk-table__cell">{{ prop.score }}</td>
-          <td>
-            <div id="map-{{ prop.uprn }}" style="height: 150px; width: 200px;"></div>
-          </td>
-          <td scope="row" class="govuk-table__cell">
-            <a class="govuk-button govuk-button--secondary" data-module="govuk-button"
-               href="{{ url_for('property', uprn=prop.uprn) }}"
-               style="color:black; text-decoration: none">Details</a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+
+  <div class="govuk-grid-row">
+    <div>
+      <h1 class="govuk-heading-l">Hard to Heat Homes</h1>
+      <table class="govuk-table govuk-table--small-text-until-tablet" id="data">
+        <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header no-sort">Address</th> 
+            <th scope="col" class="govuk-table__header" title="Low 0-4 High">Hard To Heat Score:<br>(easy) 0 - 4 (hard)</th>
+            <th scope="col" class="govuk-table__header no-sort">Details</th>
+            <th scope="col" class="govuk-table__header no-sort" style="width: 250px;">Map</th>
+          </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+          {% for prop in properties %}
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell" id="{{ prop.uprn }}">
+              {% if not prop.address %}
+                <a onclick="setAddress('{{ prop.uprn }}','{{ prop.uprn }}', '{{ key }}')" style="color:blue; text-decoration: underline">Click for address</a>
+              {% else %}
+                {{ prop.address }}
+              {% endif %}
+            </td>
+            <td class="govuk-table__cell">{{ prop.score }}</td>
+            <td class="govuk-table__cell">
+              <a class="govuk-button govuk-button--secondary" href="{{ url_for('property', uprn=prop.uprn) }}" style="color:black; text-decoration:none">Details</a>
+            </td>
+            <td class="govuk-table__cell">
+              <div id="map-{{ prop.uprn }}" style="height: 250px;"></div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
-{% endblock %}
 
-{% block scripts %}
-  <!-- jQuery and DataTables JS -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
-  <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
-
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""></script>
-
-  <script>
-    function initMaps() {
-      {% for prop in properties %}
-        {% if prop.lat and prop.long %}
-          (function() {
-            const mapId = 'map-{{ prop.uprn }}';
-            // Check if map container exists (in case of pagination)
-            if (document.getElementById(mapId) && !document.getElementById(mapId)._leaflet_id) {
-              const map = L.map(mapId).setView(
-                [{{ prop.lat }}, {{ prop.long }}],
-                15
-              );
-              L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              }).addTo(map);
-              L.marker([{{ prop.lat }}, {{ prop.long }}]).addTo(map);
-            }
-          })();
-        {% endif %}
-      {% endfor %}
-    }
-
-    $(document).ready(function () {
-      const table = $("#data").DataTable({
+  {% block scripts %}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.min.js" crossorigin="anonymous"></script>
+  <script defer>
+    $(document).ready(function() {
+      $("#data").DataTable({
         paging: true,
         pageLength: 25,
         order: [],
@@ -87,17 +53,44 @@
           targets: "no-sort"
         }]
       });
-
-      // Initialize maps after table is drawn (first load and on pagination/filter)
-      table.on('draw', function () {
-        initMaps();
-      });
-
-      // Initial map init on page load
-      initMaps();
     });
   </script>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+
+  <script>
+  function initMaps() {
+    {% for prop in properties %}
+      {% if prop.lat and prop.long %}
+      (function() {
+        const mapId = 'map-{{ prop.uprn }}';
+        const mapContainer = document.getElementById(mapId);
+
+        if (mapContainer && !mapContainer._leaflet_id) {
+          const map = L.map(mapId).setView([{{ prop.lat }}, {{ prop.long }}], 15);
+
+
+          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          }).addTo(map);
+
+          L.marker([{{ prop.lat }}, {{ prop.long }}]).addTo(map);
+        }
+      })();
+      {% endif %}
+    {% endfor %}
+  }
+
+  document.addEventListener('DOMContentLoaded', initMaps);
+  </script>
+  {% endblock %}
+
 {% endblock %}
+
+
 
 
 
