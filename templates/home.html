@@ -55,13 +55,12 @@
       });
     });
   </script>
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""></script>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""></script>
-
-  <script>
-  function initMaps() {
+<script defer>
+  window.onload = function initMaps() {
     {% for prop in properties %}
       {% if prop.lat and prop.long %}
       (()=> {
@@ -70,7 +69,6 @@
 
         if (mapContainer && !mapContainer._leaflet_id) {
           const map = L.map(mapId).setView([{{ prop.lat }}, {{ prop.long }}], 15);
-
 
           L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -83,9 +81,8 @@
       {% endif %}
     {% endfor %}
   }
+</script>
 
-  document.addEventListener('DOMContentLoaded', initMaps);
-  </script>
   {% endblock %}
 
 {% endblock %}
