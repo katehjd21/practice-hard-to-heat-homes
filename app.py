@@ -4,8 +4,7 @@ from src.utils import get_properties_from_os, get_attributes_from_epc, set_missi
 from src.variables import OS_KEY
 from src.council_data_utils import get_bbox_for_council_code, filter_properties_by_council_code
 
-app = Flask(__name__, static_folder='static', static_url_path='/static')
-
+app = Flask(__name__)
 
 elbmridge_council_code = "E07000207"
 elmbridge_bbox = get_bbox_for_council_code(elbmridge_council_code)
