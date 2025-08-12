@@ -64,7 +64,7 @@
   function initMaps() {
     {% for prop in properties %}
       {% if prop.lat and prop.long %}
-      (function() {
+      (()=> {
         const mapId = 'map-{{ prop.uprn }}';
         const mapContainer = document.getElementById(mapId);
 
