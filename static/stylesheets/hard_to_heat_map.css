@@ -1,0 +1,26 @@
+
+.leaflet-popup-content .custom-popup {
+    font-family: "GDS Transport", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.leaflet-popup-content .custom-popup a {
+    font-weight: bold;
+    font-size: 16px;
+    color: #1d70b8;
+    text-decoration: none;
+}
+
+.leaflet-popup-content .custom-popup a:hover {
+    text-decoration: underline;
+}
+
+.leaflet-popup-content .custom-popup .score-box {
+    display: block;
+    margin-top: 6px;
+    font-size: 14px;  
+    font-weight: bold;
+    color: black;   
+}
+
