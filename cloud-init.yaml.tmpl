@@ -39,8 +39,6 @@ runcmd:
     EOF
 
   - docker build -t myapp:latest /home/ubuntu/practice-hard-to-heat-homes
-
   - docker stop myapp || true
   - docker rm myapp || true
-
   - docker run -d -p 8080:8080 --name myapp myapp:latest
