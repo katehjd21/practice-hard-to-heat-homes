@@ -4,7 +4,17 @@
   <div class="govuk-grid-row">
     <div>
       <h1 class="govuk-heading-l">Hard to Heat Homes</h1>
-      <div id="map" style="height: 300px; margin-bottom: 20px;"></div>
+      <div class="map-container">
+  <div id="map"></div>
+  <div id="map-legend">
+    <strong>Hard to Heat Score</strong><br>
+    <img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png" width="15"> Easy (1)<br>
+    <img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png" width="15"> 2<br>
+    <img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png" width="15"> 3<br>
+    <img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png" width="15"> Hard (4)
+  </div>
+</div>
+
       <table class="govuk-table govuk-table--small-text-until-tablet" id="data">
         <thead class="govuk-table__head">
           <tr class="govuk-table__row">
